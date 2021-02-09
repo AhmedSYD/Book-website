@@ -1,0 +1,45 @@
+body{
+     background-image: url("../images/books.jpg");
+     background-size: cover;
+     padding: 0;
+     margin:0;
+
+}
+#loginbox{
+     background-color: white;
+     color: black;
+     width: 320px;
+     height: auto;
+     position: absolute;
+     top: 50%;
+     left: 50%;
+     transform: translate(-50%, -50%);
+     color:blue;
+     font-size: 18px;
+     /* box-sizing: border-box; */
+     opacity:  90%;
+     border-radius: 20px;
+     padding: 20px;
+}
+#loginImg{
+     width: 100px;
+     height: auto;
+     position: relative;
+     left:calc(50% - 50px);
+     margin-top: -50px;
+}
+.header{
+     text-align: center;
+     font-size: 25px;
+     font-weight: bold;
+}
+.act{
+     font-size: 12px;
+     text-decoration: none;
+     color: blue;
+     line-height: 20px;
+     padding-top: 12px;
+     /* padding-bottom: 20px; */
+
+     
+}

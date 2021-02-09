@@ -1,0 +1,27 @@
+{% extends "messages_layout.html" %}
+
+{% block title %}
+Error
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Error</h4>
+        <p>{{message}}</p>
+        <hr>
+        {% if type_error=="login" %}
+        <p class="mb-0">
+            <a href="{{url_for('login_page')}}">Return back to the login page</a>
+    
+        </p>
+        {% else %}
+            <p class="mb-0">
+                <a href="{{url_for('register')}}">Return back to the registration page</a>
+        
+            </p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
