@@ -1,0 +1,72 @@
+body,html{
+    height: 100%;
+}
+body{
+    background-image: url("../images/book_search.jpg");
+    background-size: cover;
+}
+.container{
+    height: 100%;
+}
+#search_box{
+    background-color: #35605A;
+    color: white;
+    height: auto;
+    width: 100%;
+    font-size: 20px;
+    position: sticky;
+    padding-left: 20px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+
+.header h2{
+display: inline-block;
+margin-right:62%;
+
+}
+
+.header{
+    margin-bottom: 20px;
+}
+
+#logoImg{
+    width: 100px;
+    height: auto;
+    position: relative;
+    margin:10px;
+    
+}
+.bar{
+    background-color: #D8E4FF;
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+#userLabel{
+    margin-left: 72%;
+    display: inline-block;
+}
+
+.search_group input[type="search"]{
+  width:60%; 
+  margin-right:20px;
+}
+.search_group select{
+    margin-right:40px;
+}
+.search_group button{
+    /* margin-left:10%;   */
+    background-color: #6B818C;
+    color: white;
+    width:100px;
+    /* border-style: ridge; */
+}
+.results{
+    height:auto;
+    background-color: #31E981;
+    border-radius: 20px;
+    padding:20px;
+}
+.btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
+    background-color: #00120B !important;
+}

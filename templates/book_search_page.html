@@ -3,14 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <title>Books</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- <link type="text/css" rel="stylesheet" href="{{ url_for('static',filename='styles/login_registration_page.css') }}"> -->
-
+    <link rel="stylesheet" href="../static/styles/book_search_page.css">
+    
 </head>
 <body>
+
      <div class="container">
-        welcome in the book search page 
+        <div class="bar">
+            <img src="../static/images/books_logo.png" id="logoImg">
+            <label id="userLabel">Welcome</label>
+            <a href="{{url_for('login_page')}}" class="btn btn-primary active" role="button" aria-pressed="true">Logout</a>
+        </div>
+        <div id="search_box">
+
+            <div class="header">
+                <h2> Search for your book</h2>
+                
+            </div>
+
+            <form action="{{url_for('after_searching')}}" method="POST">
+
+                <div class="search_group">
+                    
+                    <input  type="search" placeholder="Search.." name="search">
+                    <label for="searchFilter">Search By:</label>
+                    <select name="filterType">
+                        <option value="isbn">ISBN</option>
+                        <option value="title">Book Title</option>
+                        <option value="author">Book Author</option>
+                    </select>
+                    <button type="submit">Search</button>
+
+<!-- 
+                    <label for="bookTitle_label">Book Title:</label>
+                    <input  type="search" placeholder="Search book title.." name="bookTitle_search">
+
+                    <label for="bookAuthor_label">Book Autor:</label>
+                    <input type="search" placeholder="Search by book author.." name="bookSearch_search"> -->
+                </div>
+                <!-- <button type="submit">Search</button> -->
+
+           </form>
+
+        </div>
+        {% if search_flag %}
+        <div class="results">
+            {% if books_list | length > 0 %}  
+              {% for book in books_list %}    
+              <div class="list-group list-group-flush">
+                <a href="{{url_for('book_details', book_id=book[0])}}" class="list-group-item list-group-item-action flex-column align-items-start">
+                  <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{book[2]}}</h5>
+                    <small>published in {{book[4]}}</small>
+                  </div>
+                  <small>written by {{book[3]}}</small>
+                </a>
+
+              </div>
+              {% endfor %}
+            {% else %}
+            <div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading">Not found</h4>
+                <p>No matched results</p>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
      </div>
+
 </body>
 </html>

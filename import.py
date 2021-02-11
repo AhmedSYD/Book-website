@@ -22,11 +22,13 @@ def main():
     #     db.execute("INSERT INTO books (isbn,title,author,year) VALUES (:isbn, :title,:author,:year)",\
     #                {"isbn":isbn,"title":title,"author":author,"year":year})
 
-    ###create user table
-    db.execute("CREATE TABLE users (id SERIAL PRIMARY KEY, username VARCHAR NOT NULL, password VARCHAR NOT NULL, firstName VARCHAR NOT NULL, lastName VARCHAR NOT NULL)")
+    ###create users table
+    #db.execute("CREATE TABLE users (id SERIAL PRIMARY KEY, username VARCHAR NOT NULL, password VARCHAR NOT NULL, firstName VARCHAR NOT NULL, lastName VARCHAR NOT NULL)")
+    ##create reviews table
+    #db.execute("CREATE TABLE reviews(id SERIAL PRIMARY KEY, rate FLOAT NOT NULL, comment VARCHAR NOT NULL, user_id INTEGER REFERENCES users(id), book_id INTEGER REFERENCES books(id))")
 
-
-    # data=db.execute("SELECT * FROM flights").fetchall()
+    id=db.execute("SELECT id FROM users").fetchone()
+    print(f"data={id[0]}")
     # db.execute("Delete from flights")
     # print(data)
     db.commit()
