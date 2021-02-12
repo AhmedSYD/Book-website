@@ -25,10 +25,11 @@ def main():
     ###create users table
     #db.execute("CREATE TABLE users (id SERIAL PRIMARY KEY, username VARCHAR NOT NULL, password VARCHAR NOT NULL, firstName VARCHAR NOT NULL, lastName VARCHAR NOT NULL)")
     ##create reviews table
-    #db.execute("CREATE TABLE reviews(id SERIAL PRIMARY KEY, rate FLOAT NOT NULL, comment VARCHAR NOT NULL, user_id INTEGER REFERENCES users(id), book_id INTEGER REFERENCES books(id))")
+    #db.execute("CREATE TABLE reviews(id SERIAL PRIMARY KEY, rate INTEGER NOT NULL, comment VARCHAR NOT NULL, user_id INTEGER REFERENCES users(id), book_id INTEGER REFERENCES books(id))")
 
-    id=db.execute("SELECT id FROM users").fetchone()
-    print(f"data={id[0]}")
+
+    # id=db.execute("SELECT id FROM users").fetchone()
+    # print(f"data={id[0]}")
     # db.execute("Delete from flights")
     # print(data)
     db.commit()

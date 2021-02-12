@@ -3,6 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from flask import Flask, render_template, request,jsonify,session
 from flask_session import Session
+import requests
 
 
 app=Flask(__name__)
@@ -26,29 +27,30 @@ def login_page():
 def register():
     return render_template("registration.html")
 
-@app.route("/books", methods=["POST"])
+@app.route("/books", methods=["POST","GET"])
 def book_search():
-    username=request.form.get("username_login")
-    password=request.form.get("password_login")
-    ##only for testing error page. you should comment the next lines after you finish your task.
-    if username=="" or password=="":
-        return render_template("error.html", message="Your password or username field is empty. please, return again and correct your faults.", type_error="login")
-    ###########################
-    ##check if it exists in database or not
-    out_id=db.execute("select id from users where username=:username and password=:password",{"username":username,"password":password})
-    if out_id.rowcount==0:  ## username or password is not exist in database
-        return render_template("error.html", message="Your password or username is not correct or may be you don't have an account. please, return back and correct your faults.", type_error="login")
-    ##if valid render the book search page
-    if(not("user_id" in session)):
-        session["user_id"]=[]
-        print("add new data to session")
-    new_id=out_id.fetchone()[0]
-    # print("session['user_id']=",session["user_id"])
+    if request.method=="POST":
+        username=request.form.get("username_login")
+        password=request.form.get("password_login")
+        ##only for testing error page. you should comment the next lines after you finish your task.
+        if username=="" or password=="":
+            return render_template("error.html", message="Your password or username field is empty. please, return again and correct your faults.", type_error="login")
+        ###########################
+        ##check if it exists in database or not
+        out_id=db.execute("select id from users where username=:username and password=:password",{"username":username,"password":password})
+        if out_id.rowcount==0:  ## username or password is not exist in database
+            return render_template("error.html", message="Your password or username is not correct or may be you don't have an account. please, return back and correct your faults.", type_error="login")
+        ##if valid render the book search page
+        if(not("user_id" in session)):
+            session["user_id"]=[]
+            print("add new data to session")
+        new_id=out_id.fetchone()[0]
+        # print("session['user_id']=",session["user_id"])
 
-    if ((len(session["user_id"])>0 and new_id!=session["user_id"][-1]) or (len(session["user_id"])==0)):
-        session["user_id"].append(new_id)
-    print(f"session now ={session['user_id']}")
-    db.commit()
+        if ((len(session["user_id"])>0 and new_id!=session["user_id"][-1]) or (len(session["user_id"])==0)):
+            session["user_id"].append(new_id)
+        print(f"session now ={session['user_id']}")
+        db.commit()
     return render_template("book_search_page.html",search_flag=0,books_list=[])
 
 
@@ -67,13 +69,124 @@ def after_searching():
             out_result=db.execute("select * from books where isbn like :searchText", {"searchText":"%"+search_name+"%"})
         out_data=out_result.fetchall()
         print("out_data=",out_data)
+        db.commit()
     return render_template("book_search_page.html",search_flag=1, books_list=out_data)
     ###
 
-@app.route("/books/search/<int:book_id>", methods=["POST","GET"])
+@app.route("/books/search/<int:book_id>")
 def book_details(book_id):
-    return f"book_id={book_id}"
+    if(not("book_id" in session)):
+        session["book_id"]=[]
+    session["book_id"].append(book_id)
+    book_data=db.execute("select * from books where id=:book_id",{"book_id":book_id})
+    print("book_data=",book_data)
+    if(book_data.rowcount==0):
+        return render_template("error.html", message="There is no information about this book currently.",\
+                     type_error="book_search")
+    book_item=book_data.fetchone()
+    print("bookitem=",book_item)
+
+    res = requests.get("https://www.googleapis.com/books/v1/volumes", params={"q": "isbn:"+book_item[1]})
+    print(f"status code: {res.status_code}")
+    if res.status_code !=200:
+        average_rating="Null"
+        rating_count="Null"
+    else:
+        json_api_data=res.json()
+        if not("items" in json_api_data) or not("volumeInfo" in json_api_data["items"][0]):
+            average_rating="Null"
+            rating_count="Null"
+        else:
+            average_rating=json_api_data["items"][0]["volumeInfo"]["averageRating"] if ("averageRating" in json_api_data["items"][0]["volumeInfo"]) else "Null"
+            rating_count=json_api_data["items"][0]["volumeInfo"]["ratingsCount"] if ("ratingsCount" in json_api_data["items"][0]["volumeInfo"]) else "Null"  
+            print(f"average rating={average_rating} and ranting count={rating_count}")
+    ##check reviews for the book-id and user-id
+    review_data=db.execute("select users.username, reviews.rate, reviews.comment from reviews join users on reviews.user_id=users.id where book_id=:book_id",\
+                    {"book_id":book_id})
+
+    if review_data.rowcount==0:
+        flag_review=0
+        reviews=[]
+    else:
+        flag_review=1
+        reviews=review_data.fetchall()
+
+    db.commit()
+    return render_template("book_details.html",book_item=book_item,average_rating=average_rating,\
+        rating_count=rating_count,flag_review=flag_review,reviews=reviews)
+
+
+@app.route("/books/search/submit-review", methods=["POST"])
+def submit_book_review():
+    rating=request.form.get("rating")
+    comment=request.form.get("comment")
+    if rating is None:
+        return render_template("error.html", message="Please, rate your book. It is a mandatory field",\
+                type_error="book_detail",book_id=session["book_id"][-1])
+
+    review_data=db.execute("select * from reviews where book_id=:book_id and user_id=:user_id",\
+            {"book_id":session["book_id"][-1], "user_id":session["user_id"][-1]})
+    if review_data.rowcount>0:
+        return render_template("error.html", message="You already submitted a review for this book. You can't submit another review for this book",\
+                type_error="book_detail",book_id=session["book_id"][-1])
     
+    db.execute("insert into reviews (rate, comment, user_id, book_id) values (:rate,:comment,:user_id,:book_id)",\
+              {"rate":rating,"comment":comment,"user_id":session["user_id"][-1],"book_id":session["book_id"][-1]})
+
+    db.commit()
+
+    return render_template("success_submit.html",submit_type="review", book_id=session["book_id"][-1])
+
+
+
+@app.route("/api/<string:isbn>")  
+def request_json_api(isbn):
+    isbn_data=db.execute("select * from books where isbn=:isbn",{"isbn":isbn})
+    if(isbn_data.rowcount==0):
+        return render_template("error.html",message="404 Not found")
+    book_item=isbn_data.fetchone()
+
+    res = requests.get("https://www.googleapis.com/books/v1/volumes", params={"q": "isbn:"+isbn})
+    print(f"status code: {res.status_code}")
+    if (res.status_code !=200):
+        average_rating="Null"
+        rating_count="Null"
+        published_date="Null" 
+        isbn_10="Null"
+        isbn_13="Null"
+    else:
+        json_api_data=res.json()
+        if not("items" in json_api_data) or not("volumeInfo" in json_api_data["items"][0]):
+            average_rating="Null"
+            rating_count="Null"
+            published_date="Null" 
+            isbn_10="Null"
+            isbn_13="Null"
+        else:
+            average_rating=json_api_data["items"][0]["volumeInfo"]["averageRating"] if ("averageRating" in json_api_data["items"][0]["volumeInfo"]) else "Null"
+            rating_count=json_api_data["items"][0]["volumeInfo"]["ratingsCount"] if ("ratingsCount" in json_api_data["items"][0]["volumeInfo"]) else "Null"  
+            published_date=json_api_data["items"][0]["volumeInfo"]["publishedDate"] if ("publishedDate" in json_api_data["items"][0]["volumeInfo"]) else "Null"
+            isbn_10="Null"
+            isbn_13="Null"
+            if "industryIdentifiers" in json_api_data["items"][0]["volumeInfo"]:
+                for isbn_dict in json_api_data["items"][0]["volumeInfo"]["industryIdentifiers"]:
+                    if(isbn_dict["type"]=="ISBN_10"):
+                        isbn_10=isbn_dict["identifier"]
+
+                    if(isbn_dict["type"]=="ISBN_13"):
+                        isbn_13=isbn_dict["identifier"]
+
+    
+    return jsonify({"title":book_item[2],\
+                "author":book_item[3],\
+                "publishedDate":published_date,\
+                "ISBN_10":isbn_10,\
+                "ISBN_13":isbn_13,\
+                "reviewCount":rating_count,\
+                "averageRating":average_rating \
+                })
+
+
 
 
 @app.route("/register/validity", methods=["POST"])
@@ -100,7 +213,7 @@ def check_registration():
 
     ##finally, return that the registration is submitted successfully.
     db.commit()
-    return render_template("success_submit.html")
+    return render_template("success_submit.html", submit_type="register")
     
 # @app.route("/register/success")
 # def success():

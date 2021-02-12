@@ -5,67 +5,62 @@
     <title>Book Information</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="../static/styles/book_details.css">
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/book_details.css') }}">
     
 </head>
 
 <body>
 <div class="container">
-    <h2 id="bookTitleHeader">book title</h2>
+    <h2 id="bookTitleHeader">{{book_item[2]}}</h2>
     <ul class="list-group">
-        <li class="list-group-item"><span class="spanbook" id="spanbook1">Book ISBN</span>isbn</li>
-        <li class="list-group-item"><span class="spanbook" id="spanbook2">Book Author</span>author</li>
-        <li class="list-group-item"><span class="spanbook" id="spanbook3">Publication Year</span>year</li>
+        <li class="list-group-item"><span class="spanbook" id="spanbook1">Book ISBN</span>{{book_item[1]}}</li>
+        <li class="list-group-item"><span class="spanbook" id="spanbook2">Book Author</span>{{book_item[3]}}</li>
+        <li class="list-group-item"><span class="spanbook" id="spanbook3">Publication Year</span>{{book_item[4]}}</li>
       </ul>
 
       <h2 id="reviewsHeader">Reviews</h2>
+      {% if flag_review %}
       <ul class="list-group">
+        {% for review in reviews %}
         <li class="list-group-item flex-column align-items-start">
             <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">Username1</h5>
+                <h5 class="mb-1">{{review[0]}}</h5>
                 <small>
+                    {% for _ in range(review[1]) %}
                     <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
+                    {% endfor %}
+
+                    {% for _ in range(5-review[1]) %}
                     <span class="fa fa-star"></span>
-                    <span class="fa fa-star"></span>
+                    {% endfor %}
                 </small>
             </div>
-            <p class="mb-1">comments comments</p>
+            <p class="mb-1">{{review[2]}}</p>
 
         </li>
-        <li class="list-group-item flex-column align-items-start">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">Username2</h5>
-                <small>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star"></span>
-                </small>
-            </div>
-            <p class="mb-1">comments comments 2</p>
-
-        </li>
-
+        {% endfor %}
       </ul>
+      {% else %}
+        <div class="alert alert-info" role="alert">
+            There is no reviews for this book yet.
+        </div>
+      {% endif %}
 
     <h2 id="BooksApiReview">Books API reviews</h2>
     <ul class="list-group">
         <li class="list-group-item d-flex justify-content-between align-items-center">
           Average Rating
-          <span class="badge badge-secondary badge-pill">2.5</span>
+          <span class="badge badge-secondary badge-pill">{{average_rating}}</span>
         </li>
         <li class="list-group-item d-flex justify-content-between align-items-center">
           Number of Ratings
-          <span class="badge badge-secondary badge-pill">14</span>
+          <span class="badge badge-secondary badge-pill">{{rating_count}}</span>
         </li>
 
       </ul>
 
     <h2 id="PersonalreviewHeader">Add your review</h2>
-    <form>
+    <form action="{{url_for('submit_book_review')}}" method="POST">
     <label id="ratinglabel">Rating:</label>
     <div class="rating">
         
@@ -88,13 +83,14 @@
 
     <div class="form-group">
         <label for="comment">Comment:</label>
-        <textarea class="form-control" rows="5" id="comment"></textarea>
+        <textarea class="form-control" rows="5" id="comment" name="comment"></textarea>
     </div>
 
     <div class="note">
         <p><span>Note:</span> you can't submit multiple reviews for the same book</p>
     </div>
     <button type="submit" class="btn btn-primary">Submit your review</button>
+    <a href="{{url_for('book_search')}}" class="btn btn-secondary active" role="button" aria-pressed="true">Return back to search page</a>
     </form>
 </div>
 
