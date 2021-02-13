@@ -23,19 +23,32 @@ You can find all of these libraries in the `requirements.txt` and install all of
 - python flask 
 
 ## How to use the webpage:
-1- After installing all libraries required in your evironment, run `application.py` in any IDE you like.
-2- Then open any browser and type `http://127.0.0.1:5000/` in link box to go the login page 
+* After installing all libraries required in your evironment, run `application.py` in any IDE you like.
+* Then open any browser and type `http://127.0.0.1:5000/` in link box to go the login page.
 
-3- if you don't have an account, click on `Don't have acount?` link to go to the registration page where you can write your (first name, last name, username, and password), then click on submit.
+![login](https://user-images.githubusercontent.com/26576895/107851849-93ebba00-6e15-11eb-97ad-7537a5f73864.JPG)
 
-4- Go back again to the login page and write your username and password and click on login. 
+* If you don't have an account, click on `Don't have acount?` link to go to the registration page where you can write your (first name, last name, username, and password), then click on submit.
 
-5- You will find the book search page. In this page, you search for any book you like by its ISBN, title, or autor name.
+![registration](https://user-images.githubusercontent.com/26576895/107851869-ba115a00-6e15-11eb-8fc2-801cb2be30ca.JPG)
 
-6- Click on any book you like to get all information about this book as you can see in the image below.
+* Go back again to the login page and write your username and password and click on login. 
 
-7- Also, you can submit your review for this book by rating and adding comment for it. 
+* You will find the book search page. In this page, you search for any book you like by its ISBN, title, or author name.
 
-8- Additionally, you can get json data for any book you like by typing this link `http://127.0.0.1:5000/api/<isbn>` in the browser, where `<isbn>` is the ISBN of the book required. Then, you will get json data as you see below.
+![search_page](https://user-images.githubusercontent.com/26576895/107851882-d3b2a180-6e15-11eb-8595-267154b5b579.JPG)
 
+* Click on any book you like to get all information about this book as you can see in the image below.
+
+![book_details](https://user-images.githubusercontent.com/26576895/107851903-ecbb5280-6e15-11eb-8c47-4528ee70afd0.JPG)
+
+* Also, you can submit your review for this book by rating and adding comment for it. 
+
+* Additionally, you can get json data for any book you like by typing this link `http://127.0.0.1:5000/api/<isbn>` in the browser, where `<isbn>` is the ISBN of the book required. Then, you will get json data as you see below.
+
+![api](https://user-images.githubusercontent.com/26576895/107851928-02307c80-6e16-11eb-9b5d-2d8d983e79e0.JPG)
+
+
+## what’s contained in each file:
+- `import.py`
 
