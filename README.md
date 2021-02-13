@@ -10,7 +10,7 @@ This website is an assignment for the second lab of (Adv. Topics on Geospatial T
 - use any browsers (Firefox, Google Chrome,...) to display the html pages. 
 - python 3.6 or higher
 
-## Library required to install:
+## Libraries required to install:
 - Flask
 - Flask-Session
 - psycopg2-binary
@@ -50,5 +50,15 @@ You can find all of these libraries in the `requirements.txt` and install all of
 
 
 ## what’s contained in each file:
-- `import.py`
+- `books.csv`: all books information, included ISBN, title name, author name, and publication year. 
+- `import.py`: is utilized for creating a table for book in postgres database and inserting all book values from the `books.csv`. Also, create a table for users and another one for reviews. The attributes of the users table are (id,firstName, lastName, username, password), but the attributes of the reviews table are (id, rate, commment, book_id, and user_id)
+- `application.py`: is responsible for python flask coding and database transactions, namely backend. 
+- `login_registration_layout.html`: this is a layout for the login and registration pages. `login_page.html` and `registration.html` files inherit structure from it.
+- `login_page.html`: this HTML file is specified for the login page. 
+- `registration.html`: contains structure of the registration page.
+- `book_search_page.html`: has the structure of the book search page. 
+- `book_details.html`: The structure of all information about the book, reviews, and adding reviews exists in this file.
+- `messages_layout.html`: contains the layout of the messages either a successful submit message or an error message. `success_submit.html` and `error.html` inherit structure of the messages from it.
+- `success_submit.html`: has the strcuture of any successful submit.
+- `error.html`: is specified for any type of the error message
 
