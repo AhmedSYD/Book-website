@@ -66,5 +66,5 @@ You can find all of these libraries in the `requirements.txt` and install all of
 - `static/styles/book_details.css`: similarily, it is a style sheet for the `book_details.html`.
 
 ## Demo:
-- You can find the demo video for this program at this [**Link**]()
+- You can find the demo video for this program at this [**Link**](https://www.youtube.com/watch?v=pMz3UBhMB4c&ab_channel=ahmedsayed)
 
