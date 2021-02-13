@@ -62,11 +62,11 @@ def after_searching():
         print("search=", search_name)
         print("filterType=",filterType)
         if(filterType=="title"):
-            out_result=db.execute("select * from books where title like :searchText", {"searchText":"%"+search_name+"%"})
+            out_result=db.execute("select * from books where title ILIKE :searchText", {"searchText":"%"+search_name+"%"})
         elif(filterType=="author"):
-            out_result=db.execute("select * from books where author like :searchText", {"searchText":"%"+search_name+"%"})
+            out_result=db.execute("select * from books where author ILIKE :searchText", {"searchText":"%"+search_name+"%"})
         else:
-            out_result=db.execute("select * from books where isbn like :searchText", {"searchText":"%"+search_name+"%"})
+            out_result=db.execute("select * from books where isbn ILIKE :searchText", {"searchText":"%"+search_name+"%"})
         out_data=out_result.fetchall()
         print("out_data=",out_data)
         db.commit()
@@ -143,7 +143,8 @@ def submit_book_review():
 def request_json_api(isbn):
     isbn_data=db.execute("select * from books where isbn=:isbn",{"isbn":isbn})
     if(isbn_data.rowcount==0):
-        return render_template("error.html",message="404 Not found")
+        # return render_template("error.html",message="404 Not found")
+        return jsonify({"error":"not found", "message":"invalid ISBN"}),404
     book_item=isbn_data.fetchone()
 
     res = requests.get("https://www.googleapis.com/books/v1/volumes", params={"q": "isbn:"+isbn})

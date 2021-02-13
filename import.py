@@ -10,22 +10,22 @@ db = scoped_session(sessionmaker(bind=engine))
 
 def main():
 
-    # db.execute("CREATE TABLE books (id SERIAL PRIMARY KEY,isbn VARCHAR NOT NULL, title VARCHAR NOT NULL, author VARCHAR NOT NULL, year INTEGER NOT NULL)")
-    # data_file=open("books.csv")
-    # reader=csv.reader(data_file)
-    # i=0
-    # for isbn,title,author,year in reader:
-    #     if i==0: ##skip title of data in csv
-    #         i=1
-    #         continue
-    #     print(isbn,title,author,year)
-    #     db.execute("INSERT INTO books (isbn,title,author,year) VALUES (:isbn, :title,:author,:year)",\
-    #                {"isbn":isbn,"title":title,"author":author,"year":year})
+    db.execute("CREATE TABLE books (id SERIAL PRIMARY KEY,isbn VARCHAR NOT NULL, title VARCHAR NOT NULL, author VARCHAR NOT NULL, year INTEGER NOT NULL)")
+    data_file=open("books.csv")
+    reader=csv.reader(data_file)
+    i=0
+    for isbn,title,author,year in reader:
+        if i==0: ##skip title of data in csv
+            i=1
+            continue
+        print(isbn,title,author,year)
+        db.execute("INSERT INTO books (isbn,title,author,year) VALUES (:isbn, :title,:author,:year)",\
+                   {"isbn":isbn,"title":title,"author":author,"year":year})
 
-    ###create users table
-    #db.execute("CREATE TABLE users (id SERIAL PRIMARY KEY, username VARCHAR NOT NULL, password VARCHAR NOT NULL, firstName VARCHAR NOT NULL, lastName VARCHAR NOT NULL)")
-    ##create reviews table
-    #db.execute("CREATE TABLE reviews(id SERIAL PRIMARY KEY, rate INTEGER NOT NULL, comment VARCHAR NOT NULL, user_id INTEGER REFERENCES users(id), book_id INTEGER REFERENCES books(id))")
+    ##create users table
+    db.execute("CREATE TABLE users (id SERIAL PRIMARY KEY, username VARCHAR NOT NULL, password VARCHAR NOT NULL, firstName VARCHAR NOT NULL, lastName VARCHAR NOT NULL)")
+    #create reviews table
+    db.execute("CREATE TABLE reviews(id SERIAL PRIMARY KEY, rate INTEGER NOT NULL, comment VARCHAR NOT NULL, user_id INTEGER REFERENCES users(id), book_id INTEGER REFERENCES books(id))")
 
 
     # id=db.execute("SELECT id FROM users").fetchone()
